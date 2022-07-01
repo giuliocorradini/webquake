@@ -25,7 +25,6 @@ class WindowClient(EasySeedLinkClient):
 
 
     def on_data(self, trace: Trace):
-        logging.debug(trace)
         self.stream += trace
 
         if self.plot_timer.elapsed():
@@ -48,7 +47,6 @@ class WindowClient(EasySeedLinkClient):
     def relay_waveform(self):
         updated_wave = self.stream.copy()
         waves.put(updated_wave)
-        print(updated_wave)
 
 
 def main():
@@ -56,7 +54,8 @@ def main():
     client = WindowClient('localhost:18000')
     client.select_stream("IV", "CAVE", "HH?")
 
-    client.run()
+    slclient_t = threading.Thread(target=client.run, name="seedlink_client")
+    slclient_t.start()
 
 
 if __name__ == '__main__':
