@@ -1,4 +1,4 @@
-import { DatePicker, DatePickerInput, TextInput, TimePicker } from "carbon-components-react";
+import { DatePicker, DatePickerInput, TextInput } from "carbon-components-react";
 
 export function DateTimePicker(props) {
 
