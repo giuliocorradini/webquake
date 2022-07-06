@@ -8,22 +8,13 @@ let STATION_CODE = "CAVE";
 let STATION_LOC = "";
 let CHANNEL = "HH?";
 
-var seiswave;
-
-function onWaveRequestFullfilment(val) {
-    seiswave = val;
-    console.log("Received seismogram: " + val);
-}
-
-function onWaveRequestFailure(val) {
-    console.log("database error");
-}
+var seiswave = [];
 
 export function GetSeiswave() {
     return seiswave;
 }
 
-export function QueryDatabase() {
+export function QueryDatabase(dataAvCb, queryServerCb) {
     var waves = new DataSelectQuery(INGV_HOST);
     var now = moment().subtract(10, 'minutes');
 
@@ -31,9 +22,20 @@ export function QueryDatabase() {
       .networkCode(NETWORK_CODE)
       .stationCode(STATION_CODE)
       .channelCode(CHANNEL)
-      .startTime(now.clone().subtract(5, 'minutes'))
+      .startTime(now.clone().subtract(30, 'seconds'))
       .endTime(now);
     
+    const onWaveRequestFullfilment = val => {
+        seiswave = val;
+        dataAvCb(true);
+        queryServerCb(false);
+    }
+    
+    const onWaveRequestFailure = val => {
+        queryServerCb(false);
+    }
+    
+
     var wfile_promise = waves.querySeismograms();
     wfile_promise.then(onWaveRequestFullfilment, onWaveRequestFailure);
 }
