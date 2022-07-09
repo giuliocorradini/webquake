@@ -14,16 +14,18 @@ export function GetSeiswave() {
     return seiswave;
 }
 
-export function QueryDatabase(dataAvCb, queryServerCb) {
-    var waves = new DataSelectQuery(INGV_HOST);
-    var now = moment().subtract(10, 'minutes');
+export function QueryDatabase(dataAvCb, queryServerCb, sDt, eDt) {
+    let waves = new DataSelectQuery(INGV_HOST);
 
+    const start = moment(sDt);
+    const end = moment(eDt);
+    
     waves
       .networkCode(NETWORK_CODE)
       .stationCode(STATION_CODE)
       .channelCode(CHANNEL)
-      .startTime(now.clone().subtract(30, 'seconds'))
-      .endTime(now);
+      .startTime(start)
+      .endTime(end);
     
     const onWaveRequestFullfilment = val => {
         seiswave = val;
