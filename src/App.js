@@ -1,11 +1,14 @@
 import './App.scss';
-import { Button, Content, InlineLoading, Row, FlexGrid, Column, Form, Grid } from 'carbon-components-react';
+import { Button, Content, InlineLoading, Row, FlexGrid, Column, Form, Grid, ButtonSet } from 'carbon-components-react';
 import { DateTimePicker } from './DateTimePicker';
 import { DocumentDownload } from '@carbon/icons-react';
 import { GetSeiswave, QueryDatabase } from './QueryDatabase';
 import { Seismograms } from './Seismogram';
 import { useRef, useState } from 'react';
 import Header from './Header';
+import { WatsonHealthSaveImage } from '@carbon/icons-react';
+import { createRef } from 'react';
+import { useScreenshot } from 'use-react-screenshot';
 
 
 function WaitingBar(props) {
@@ -19,8 +22,13 @@ function WaitingBar(props) {
 function App() {
     const [isQueryingServer, setQueryingServer] = useState(false);
     const [isDataAvailable, setDataAvailable] = useState(false);
+
     const [startDt, setStartDt] = useState(new Date());
     const [endDt, setEndDt] = useState(new Date());
+
+    const ref = createRef(null);
+    const [image, takeScreenshot] = useScreenshot();
+    const getImage = () => takeScreenshot(ref.current);
 
     function StartQuery() {
         if(!isQueryingServer) {
@@ -45,14 +53,18 @@ function App() {
                     </Row>
                     <Row>
                         <Column>
-                            <Button renderIcon={ DocumentDownload } onClick={StartQuery}>Scarica</Button>
-                        </Column>
-                        <Column>
-                            <WaitingBar waiting={isQueryingServer} />
+                            <ButtonSet>
+                                <Button renderIcon={ DocumentDownload } onClick={StartQuery}>Scarica</Button>
+                                <Button renderIcon={ WatsonHealthSaveImage } onClick={getImage}>Salva</Button>
+                                <WaitingBar waiting={ isQueryingServer } />
+                            </ButtonSet>
                         </Column>
                     </Row>
                 </FlexGrid>
-                {isDataAvailable ? <Seismograms data={GetSeiswave()}/> : null}
+                <div ref={ref}>
+                    {isDataAvailable ? <Seismograms data={GetSeiswave()}/> : null}
+                </div>
+                <img width={400} src={image}></img>
             </Content>
         </div>
     );

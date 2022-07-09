@@ -1,5 +1,3 @@
-import { PropTypes } from "carbon-components-react";
-import { useEffect, useRef } from "react";
 import { Line, LineChart, XAxis, YAxis, CartesianGrid, Label } from "recharts";
 
 function SingleSeismogram(props) {
@@ -9,7 +7,7 @@ function SingleSeismogram(props) {
         return {v: x, t: time.add(10, 'milliseconds').format('HH:mm:ss')}
     });
 
-    return <LineChart width={1300} height={400} margin={{bottom: 100, right: 100}} data={ data }>
+    return <LineChart width={1300} height={400} margin={{bottom: 90, right: 100, top: 20}} data={ data }>
         <CartesianGrid strokeDasharray="3 3"/>
         <XAxis dataKey="t" angle={35} tickMargin={20}>
             <Label position="bottom" offset={35} value={props.ch} />
